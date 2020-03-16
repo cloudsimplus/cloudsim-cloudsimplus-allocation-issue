@@ -17,7 +17,7 @@ The simulation scenario is compounded of as below
 | *Objects* | *Amount* | *Configuration for each individual object*
 | Hosts   | 2      | 8 PEs of 1000 MIPS
 | VMs     | 5      | 4 PEs of 1000 MIPS
-| Cloudlet     | 1 for each VM      | 4 PEs of 1000 MIPS, length of 10000 MIPS
+| Cloudlets     | 1 for each VM      | 4 PEs of 1000 MIPS, length of 10000 MI
 |===
 
 As you can see by the table above, we can place 2 VMs in each Host.
