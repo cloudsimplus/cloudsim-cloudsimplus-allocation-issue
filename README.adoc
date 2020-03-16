@@ -1,0 +1,51 @@
+= CloudSim vs CloudSim Plus Resource Allocation
+
+This projects provides a single simulation scenario
+that can be run in CloudSim Plus 4.3.0 and 5.2.2.
+
+It uses a `VmAllocationPolicySimple` which implements a Worst-Fit policy
+to allocate Hosts to VMs. VM scheduling is performed by a `VmSchedulerSpaceShared` policy.
+
+CloudSim Plus 4 uses the same implementations of `VmAllocationPolicy` provided by CloudSim.
+That implementation relies on HashMaps to keep track of the number of used PEs by each Host.
+That makes finding a Host to place a VM computationally complex in large scale experiments.
+CloudSim Plus 5 provides new, simpler and faster implementations of those policies.
+
+The simulation scenario is compounded of as below
+
+|===
+| *Objects* | *Amount* | *Configuration for each individual object*
+| Hosts   | 2      | 8 PEs of 1000 MIPS
+| VMs     | 5      | 4 PEs of 1000 MIPS
+| Cloudlet     | 1 for each VM      | 4 PEs of 1000 MIPS, length of 10000 MIPS
+|===
+
+As you can see by the table above, we can place 2 VMs in each Host.
+Since we have 2 Hosts, we can run 4 VMs. However, it's requested the creation of 5 VMs.
+Therefore, one VM will fail to be created.
+Since each Cloudlet created will be bound to a specific VM, if a
+given VM cannot be created due to lack of available physical resources,
+then its Cloudlets could not be executed.
+
+However, running the simulation using CloudSim Plus 4 (as explained in the next section),
+one of the VMs will fail. However, the Cloudlet previously bound to it will be placed
+inside another available VM. Such a behaviour is performed by the DatacenterBroker,
+as implemented in CloudSim.
+That is a surprising and unexpected behaviour. If you want a Cloudlet to
+run in any VM available, you just don't bind it to a VM.
+If you do that, you are telling that it must run specifically on that VM.
+
+Therefore, using CloudSim Plus 4, you may not see some Cloudlets failing because
+they are allocated in some VM anyway.
+
+In CloudSim Plus 5, if a Cloudlet is bound to a VM and that VM is not created,
+the Cloudlet is not executed.
+If you want the broker to choose where to run a Cloudlet, simply don't bind it
+to a VM. The broker will do that.
+
+== Running the simulation
+
+You can run the project using the different versions of CloudSim Plus with the commands below:
+
+- CloudSim Plus 4 `mvn -P cloudsimplus4 clean package exec:java -q`
+- CloudSim Plus 5 `mvn clean package exec:java -q`
