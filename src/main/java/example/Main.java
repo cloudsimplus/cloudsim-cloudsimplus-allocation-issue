@@ -81,12 +81,14 @@ public final class Main {
 
         simulation.start();
 
-        final List<Cloudlet> finishedCloudlets = broker0.getCloudletFinishedList();
-        finishedCloudlets.sort(comparingLong(this::getVmId).thenComparing(this::getHostId).thenComparingLong(Cloudlet::getId));
-        new CloudletsTableBuilder(finishedCloudlets)
+        final List<Cloudlet> finishedList = broker0.getCloudletFinishedList();
+        finishedList.sort(Comparator.comparingLong(Cloudlet::getId));
+        new CloudletsTableBuilder(finishedList)
+                .setTitle("Finished Cloudlets")
+                .column(1, col -> col.setTitle("Status       "))
                 .removeColumn(2)
                 .build();
-        System.out.printf("Submited Cloudets: %d Finished Cloudlets: %s%n", cloudletList.size(), finishedCloudlets.size());
+        System.out.printf("Submited Cloudets: %d Finished Cloudlets: %s%n", cloudletList.size(), finishedList.size());
         System.out.println("CloudSim Plus: " + CloudSim.VERSION);
         System.out.println();
     }
