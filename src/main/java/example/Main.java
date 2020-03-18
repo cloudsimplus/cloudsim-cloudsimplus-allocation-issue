@@ -20,6 +20,7 @@ import org.cloudbus.cloudsim.utilizationmodels.UtilizationModelFull;
 import org.cloudbus.cloudsim.vms.Vm;
 import org.cloudbus.cloudsim.vms.VmSimple;
 import org.cloudsimplus.builders.tables.CloudletsTableBuilder;
+import org.cloudsimplus.builders.tables.TextTableColumn;
 import org.cloudsimplus.util.Log;
 
 import java.util.ArrayList;
@@ -81,14 +82,18 @@ public final class Main {
 
         simulation.start();
 
-        final List<Cloudlet> finishedList = broker0.getCloudletFinishedList();
-        finishedList.sort(Comparator.comparingLong(Cloudlet::getId));
-        new CloudletsTableBuilder(finishedList)
-                .setTitle("Finished Cloudlets")
-                .column(1, col -> col.setTitle("Status       "))
+        cloudletList.sort(Comparator.comparingLong(Cloudlet::getId));
+        new CloudletsTableBuilder(cloudletList)
+                .setTitle("Submitted Cloudlets")
+                .column(1, col -> col.setTitle("Status                       "))
                 .removeColumn(2)
+                .addColumn(5, new TextTableColumn("VM Status"), cl -> cl.getVm().isFailed() ? "Fail" : "Success")
                 .build();
-        System.out.printf("Submited Cloudets: %d Finished Cloudlets: %s%n", cloudletList.size(), finishedList.size());
+        System.out.printf("Cloudlets  => Submitted: %d Created: %d Finished: %s Waiting: %d%n",
+                broker0.getCloudletSubmittedList().size(),
+                broker0.getCloudletCreatedList().size(),
+                broker0.getCloudletFinishedList().size(),
+                broker0.getCloudletWaitingList().size());
         System.out.println("CloudSim Plus: " + CloudSim.VERSION);
         System.out.println();
     }
